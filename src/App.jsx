@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Tasks from "./components/Tasks";
 import AddTask from "./components/AddTask";
 import { v4 } from "uuid";
+import Title from "./components/Title";
 
 function App() {
   // State (estado)
@@ -12,6 +13,24 @@ function App() {
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
+
+  useEffect(() => {
+    async function fetchTasks() {
+      // chamar a API
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/todos?_limit=10"
+      );
+
+      // obter os dados
+      const data = await response.json();
+      console.log(data);
+
+      // armazenar no states
+      setTasks(data);
+    }
+
+    fetchTasks();
+  }, []);
 
   function onTaskClick(taskId) {
     const newTasks = tasks.map((task) => {
@@ -44,9 +63,9 @@ function App() {
   return (
     <div className="w-screen h-screen bg-slate-500 flex justify-center p-6">
       <div className="w-[500px] space-y-4">
-        <h1 className="text-3xl text-slate-100 font-bold text-center">
+        <Title className="text-3xl text-slate-100 font-bold text-center">
           Gerenciador de Tarefas
-        </h1>
+        </Title>
         <AddTask onAddTaskSubmit={onAddTaskSubmit} />
         <Tasks
           tasks={tasks}
